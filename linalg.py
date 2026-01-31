@@ -17,6 +17,13 @@ class Vec3:
     def dot(self, other: 'Vec3') -> float:
         return self.x * other.x + self.y * other.y + self.z * other.z
     
+    def cross(self, other: 'Vec3') -> 'Vec3':
+        return Vec3(
+            self.y * other.z - self.z * other.y,
+            self.z * other.x - self.x * other.z,
+            self.x * other.y - self.y * other.x
+        )
+    
     def length(self) -> float:
         return (self.x**2 + self.y**2 + self.z**2) ** 0.5
     
