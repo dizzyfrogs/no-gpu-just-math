@@ -46,13 +46,7 @@ class Mat4:
 
     
     def __mul__(self, vec: Vec3) -> Vec3:
-        x = vec.x * self.elements[0] + vec.y * self.elements[4] + vec.z * self.elements[8] + self.elements[12]
-        y = vec.x * self.elements[1] + vec.y * self.elements[5] + vec.z * self.elements[9] + self.elements[13]
-        z = vec.x * self.elements[2] + vec.y * self.elements[6] + vec.z * self.elements[10] + self.elements[14]
-        w = vec.x * self.elements[3] + vec.y * self.elements[7] + vec.z * self.elements[11] + self.elements[15]
-        if w != 0:
-            return Vec3(x / w, y / w, z / w)
-        return Vec3(x, y, z)
+        return self.transform_point(vec)
     
     def transpose(self) -> 'Mat4':
         transposed = [0.0] * 16
@@ -61,7 +55,17 @@ class Mat4:
                 transposed[col * 4 + row] = self.elements[row * 4 + col]
         return Mat4(transposed)
     
-    #transform_point()
+    def transform_point(self, vec: Vec3) -> Vec3:
+        x = vec.x * self.elements[0]  + vec.y * self.elements[4]  + vec.z * self.elements[8]  + self.elements[12]
+        y = vec.x * self.elements[1]  + vec.y * self.elements[5]  + vec.z * self.elements[9]  + self.elements[13]
+        z = vec.x * self.elements[2]  + vec.y * self.elements[6]  + vec.z * self.elements[10] + self.elements[14]
+        w = vec.x * self.elements[3]  + vec.y * self.elements[7]  + vec.z * self.elements[11] + self.elements[15]
+
+        if w != 0.0:
+            return Vec3(x / w, y / w, z / w)
+
+        return Vec3(x, y, z)
+
     #transform_vector()
     
     @staticmethod
@@ -125,8 +129,8 @@ class Mat4:
         ])
     
     @staticmethod
-    def perspective(fov_rad: float, aspect: float, near: float, far: float) -> 'Mat4':
-        f = 1.0 / math.tan(fov_rad / 2)
+    def perspective(*, fov: float, aspect: float, near: float, far: float) -> 'Mat4':
+        f = 1.0 / math.tan(fov / 2)
         return Mat4([
             f / aspect, 0, 0, 0,
             0, f, 0, 0,
