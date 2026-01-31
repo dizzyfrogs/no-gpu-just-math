@@ -1,3 +1,4 @@
+import math
 class Vec3:
     def __init__(self, x: float, y: float, z: float):
         self.x = x
@@ -20,10 +21,10 @@ class Vec3:
         return (self.x**2 + self.y**2 + self.z**2) ** 0.5
     
     def normalize(self) -> 'Vec3':
-        len = self.length()
-        if len == 0:
+        length = self.length()
+        if length == 0:
             return Vec3(0, 0, 0)
-        return Vec3(self.x / len, self.y / len, self.z / len)
+        return Vec3(self.x / length, self.y / length, self.z / length)
     
 class Mat4:
     def __init__(self, elements: list):
@@ -59,3 +60,76 @@ class Mat4:
             for row in range(4):
                 transposed[col * 4 + row] = self.elements[row * 4 + col]
         return Mat4(transposed)
+    
+    #transform_point()
+    #transform_vector()
+    
+    @staticmethod
+    def identity() -> 'Mat4':
+        return Mat4([
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 1
+        ])
+    
+    @staticmethod
+    def translation(tx: float, ty: float, tz: float) -> 'Mat4':
+        return Mat4([
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            tx, ty, tz, 1
+        ])
+    
+    @staticmethod
+    def scaling(sx: float, sy: float, sz: float) -> 'Mat4':
+        return Mat4([
+            sx, 0, 0, 0,
+            0, sy, 0, 0,
+            0, 0, sz, 0,
+            0, 0, 0, 1
+        ])
+    
+    @staticmethod
+    def rotation_x(angle_rad: float) -> 'Mat4':
+        c = math.cos(angle_rad)
+        s = math.sin(angle_rad)
+        return Mat4([
+            1, 0, 0, 0,
+            0, c, -s, 0,
+            0, s, c, 0,
+            0, 0, 0, 1
+        ])
+    
+    @staticmethod
+    def rotation_y(angle_rad: float) -> 'Mat4':
+        c = math.cos(angle_rad)
+        s = math.sin(angle_rad)
+        return Mat4([
+            c, 0, -s, 0,
+            0, 1, 0, 0,
+            s, 0, c, 0,
+            0, 0, 0, 1
+        ])
+    
+    @staticmethod
+    def rotation_z(angle_rad: float) -> 'Mat4':
+        c = math.cos(angle_rad)
+        s = math.sin(angle_rad)
+        return Mat4([
+            c, s, 0, 0,
+            -s, c, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 1
+        ])
+    
+    @staticmethod
+    def perspective(fov_rad: float, aspect: float, near: float, far: float) -> 'Mat4':
+        f = 1.0 / math.tan(fov_rad / 2)
+        return Mat4([
+            f / aspect, 0, 0, 0,
+            0, f, 0, 0,
+            0, 0, (far + near) / (near - far), -1,
+            0, 0, (2 * far * near) / (near - far), 0
+        ])
